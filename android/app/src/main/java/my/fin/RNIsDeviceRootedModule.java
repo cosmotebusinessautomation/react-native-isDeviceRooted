@@ -29,7 +29,7 @@ public class RNIsDeviceRootedModule extends ReactContextBaseJavaModule {
 	@ReactMethod
 	public void isDeviceRooted(Promise promise) {
 		try {
-			boolean isRooted = checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
+			boolean isRooted = checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || canExecuteSu();
 			promise.resolve(isRooted);
 		}
 		catch (Exception e) {
@@ -55,7 +55,18 @@ public class RNIsDeviceRootedModule extends ReactContextBaseJavaModule {
         else
 			return false;
     }
-
+	
+private static boolean canExecuteSu() {
+        boolean executedSuccesfully;
+        try {
+            Runtime.getRuntime().exec("su");
+            executedSuccesfully = true;
+        } catch (Exception e) {
+            executedSuccesfully = false;
+        }
+        return executedSuccesfully;
+  }
+	
 	private static boolean checkRootMethod1() {
 	    String buildTags = android.os.Build.TAGS;
 	    return buildTags != null && buildTags.contains("test-keys");
